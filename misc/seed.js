@@ -5,6 +5,11 @@
  */
 
 const API_GATEWAY_URL = process.env.API_GATEWAY_URL || "http://127.0.0.1:8000";
+const ADMIN_EMAIL =
+  process.env.DEFAULT_ADMIN_EMAIL || "admin@cipher-sql-studio.dev";
+const ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD || "admin123";
+
+let sessionCookie = null;
 
 const ASSIGNMENTS = [
   {
@@ -139,6 +144,19 @@ const seed = async () => {
     process.exit(1);
   }
 
+  console.log("Authenticating as admin user...");
+  const signInRes = await fetch(`${API_GATEWAY_URL}/api/auth/sign-in/email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: ADMIN_EMAIL, password: ADMIN_PASSWORD }),
+    redirect: "manual",
+  });
+  const setCookieHeader = signInRes.headers.get("set-cookie");
+  if (setCookieHeader) {
+    sessionCookie = setCookieHeader;
+  }
+  console.log("Admin authentication complete.");
+
   for (const assignment of ASSIGNMENTS) {
     console.log(`Seeding assignment: ${assignment.title}.`);
 
@@ -149,6 +167,7 @@ const seed = async () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            ...(sessionCookie ? { Cookie: sessionCookie } : {}),
           },
           body: JSON.stringify(assignment),
         },

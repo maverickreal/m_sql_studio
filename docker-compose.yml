@@ -83,6 +83,14 @@ services:
       LOG_DIR: "/var/log/cipher_sql_studio"
       BULLMQ_SQL_QUEUE_NAME: "${BULLMQ_SQL_QUEUE_NAME}"
       INTERNAL_API_KEY: "${INTERNAL_API_KEY}"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET}"
+      BETTER_AUTH_URL: "${BETTER_AUTH_URL}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
+      GITHUB_CLIENT_ID: "${GITHUB_CLIENT_ID}"
+      GITHUB_CLIENT_SECRET: "${GITHUB_CLIENT_SECRET}"
+      DEFAULT_ADMIN_EMAIL: "${DEFAULT_ADMIN_EMAIL}"
+      DEFAULT_ADMIN_PASSWORD: "${DEFAULT_ADMIN_PASSWORD}"
     develop:
       watch:
         - path: ../cipher_sql_studio_api_gateway/src
@@ -128,6 +136,23 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     cpus: 1.0
+
+  client:
+    build:
+      context: ../cipher_sql_studio_client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_BASE_URL: "${API_GATEWAY_URL}"
+    develop:
+      watch:
+        - path: ../cipher_sql_studio_client/src
+          action: rebuild
+          target: /app/dist
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
 
 volumes:
   mongo-data:
