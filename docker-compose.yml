@@ -141,6 +141,8 @@ services:
     build:
       context: ../cipher_sql_studio_client
       dockerfile: Dockerfile
+      args:
+        NGINX_SERVER_NAME: "${NGINX_SERVER_NAME}"
     ports:
       - "3000:80"
     environment:
