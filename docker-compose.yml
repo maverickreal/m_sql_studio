@@ -69,7 +69,7 @@ services:
   api-gateway:
     build:
       # TODO: standardise the project as an image.
-      context: ../cipher_sql_studio_api_gateway
+      context: ../m_sql_studio_api_gateway
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
@@ -80,7 +80,7 @@ services:
       REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379"
       ENV_MODE: "${ENV_MODE}"
       LOG_LEVEL: "${LOG_LEVEL}"
-      LOG_DIR: "/var/log/cipher_sql_studio"
+      LOG_DIR: "/var/log/m_sql_studio"
       BULLMQ_SQL_QUEUE_NAME: "${BULLMQ_SQL_QUEUE_NAME}"
       INTERNAL_API_KEY: "${INTERNAL_API_KEY}"
       BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET}"
@@ -93,7 +93,7 @@ services:
       DEFAULT_ADMIN_PASSWORD: "${DEFAULT_ADMIN_PASSWORD}"
     develop:
       watch:
-        - path: ../cipher_sql_studio_api_gateway/src
+        - path: ../m_sql_studio_api_gateway/src
           action: rebuild
           target: /app/dist
     depends_on:
@@ -105,7 +105,7 @@ services:
 
   sandbox-executor:
     build:
-      context: ../cipher_sql_studio_sandbox
+      context: ../m_sql_studio_sandbox
       dockerfile: Dockerfile
     environment:
       REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379"
@@ -118,14 +118,14 @@ services:
       ADMIN_PG_PASSWORD: "${POSTGRES_PASSWORD}"
       ENV_MODE: "${ENV_MODE}"
       LOG_LEVEL: "${LOG_LEVEL}"
-      LOG_DIR: "/var/log/cipher_sql_studio"
+      LOG_DIR: "/var/log/m_sql_studio"
       BULLMQ_SQL_QUEUE_NAME: "${BULLMQ_SQL_QUEUE_NAME}"
       INTERNAL_API_KEY: "${INTERNAL_API_KEY}"
       # TODO: would use https instead.
       API_GATEWAY_URL: "http://api-gateway:8000"
     develop:
       watch:
-        - path: ../cipher_sql_studio_sandbox/src
+        - path: ../m_sql_studio_sandbox/src
           action: rebuild
           target: /app/dist
     depends_on:
@@ -139,7 +139,7 @@ services:
 
   client:
     build:
-      context: ../cipher_sql_studio_client
+      context: ../m_sql_studio_client
       dockerfile: Dockerfile
       args:
         NGINX_SERVER_NAME: "${NGINX_SERVER_NAME}"
@@ -149,7 +149,7 @@ services:
       VITE_API_BASE_URL: "${API_GATEWAY_URL}"
     develop:
       watch:
-        - path: ../cipher_sql_studio_client/src
+        - path: ../m_sql_studio_client/src
           action: rebuild
           target: /app/dist
     depends_on:

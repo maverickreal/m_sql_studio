@@ -7,9 +7,9 @@
 set -e
 
 echo "Installing dependencies for api-gateway and sandbox."
-cd ../cipher_sql_studio_api_gateway && npm ci
-cd ../cipher_sql_studio_sandbox && npm ci
-cd ../cipher_sql_studio
+cd ../m_sql_studio_api_gateway && npm ci
+cd ../m_sql_studio_sandbox && npm ci
+cd ../m_sql_studio
 
 # Cleanup containers, volumes, and networks and rebuild images.
 docker stop $(docker ps -q) 2>/dev/null || true && \

@@ -1,4 +1,4 @@
-# CipherSqlStudio
+# MSqlStudio
 
 An online SQL learning platform where users solve SQL assignments against real PostgreSQL databases. Submissions execute in isolated sandboxes, and results are compared against reference solutions for automated grading.
 
@@ -8,9 +8,9 @@ To test/run the entire backend locally, all you need do is:
 
 1. Clone all the project repos:
    - https://github.com/maverickreal/m_sql
-   - https://github.com/maverickreal/cipher_sql_studio_sandbox
-   - https://github.com/maverickreal/cipher_sql_studio_api_gateway
-2. Run the following shell code, from within the orchestrator repo (cipher_sql_studio):
+   - https://github.com/maverickreal/m_sql_studio_sandbox
+   - https://github.com/maverickreal/m_sql_studio_api_gateway
+2. Run the following shell code, from within the orchestrator repo (m_sql_studio):
    ```sh
    chmod u+x ./init.dev.bash;
    ./init.dev.bash;
@@ -35,15 +35,15 @@ Client (Browser)
 | **redis**            | `redis:7-alpine`                   | 6379  | Caching, rate limiting, BullMQ job queue                     |
 | **mongo**            | `mongo:8`                          | 27017 | Assignment metadata storage                                  |
 | **postgres**         | `postgres:16-alpine`               | 5432  | SQL execution sandbox (isolated schemas per assignment)      |
-| **api-gateway**      | `../cipher_sql_studio_api_gateway` | 8000  | REST API for clients and admin operations                    |
-| **sandbox-executor** | `../cipher_sql_studio_sandbox`     | --    | BullMQ worker that executes user SQL in sandboxed PostgreSQL |
+| **api-gateway**      | `../m_sql_studio_api_gateway` | 8000  | REST API for clients and admin operations                    |
+| **sandbox-executor** | `../m_sql_studio_sandbox`     | --    | BullMQ worker that executes user SQL in sandboxed PostgreSQL |
 
 ### Related Repositories
 
 | Repository                                                        | Description                                          |
 | ----------------------------------------------------------------- | ---------------------------------------------------- |
-| [cipher_sql_studio_api_gateway](../cipher_sql_studio_api_gateway) | Express.js 5 REST API (TypeScript, Node.js 22)       |
-| [cipher_sql_studio_sandbox](../cipher_sql_studio_sandbox)         | BullMQ SQL execution worker (TypeScript, Node.js 22) |
+| [m_sql_studio_api_gateway](../m_sql_studio_api_gateway) | Express.js 5 REST API (TypeScript, Node.js 22)       |
+| [m_sql_studio_sandbox](../m_sql_studio_sandbox)         | BullMQ SQL execution worker (TypeScript, Node.js 22) |
 
 ## Prerequisites
 
@@ -58,9 +58,9 @@ All three repositories must be sibling directories:
 
 ```
 project/
-├── cipher_sql_studio/               # This repo
-├── cipher_sql_studio_api_gateway/
-└── cipher_sql_studio_sandbox/
+├── m_sql_studio/               # This repo
+├── m_sql_studio_api_gateway/
+└── m_sql_studio_sandbox/
 ```
 
 ### 2. Configure Environment Variables
@@ -112,7 +112,7 @@ This script will:
 ## Project Structure
 
 ```
-cipher_sql_studio/
+m_sql_studio/
 ├── docker-compose.yml          # Orchestrates all 5 services
 ├── .env.example                # Environment variable template
 ├── init.dev.bash               # Automated dev environment setup

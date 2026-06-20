@@ -6,7 +6,7 @@
 
 const API_GATEWAY_URL = process.env.API_GATEWAY_URL || "http://127.0.0.1:8000";
 const ADMIN_EMAIL =
-  process.env.DEFAULT_ADMIN_EMAIL || "admin@cipher-sql-studio.dev";
+  process.env.DEFAULT_ADMIN_EMAIL || "admin@m-sql-studio.dev";
 const ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD || "admin123";
 
 let sessionCookie = null;
