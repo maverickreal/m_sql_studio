@@ -71,10 +71,13 @@ services:
       # TODO: standardise the project as an image.
       context: ../m_sql_studio_api_gateway
       dockerfile: Dockerfile
+      args:
+        - ENV_MODE=${ENV_MODE}
     ports:
       - "8000:8000"
     environment:
       CLIENT_URL: "${CLIENT_URL}"
+      ADMIN_SECRET_CODE: "${ADMIN_SECRET_CODE}"
       SERVER_PORT: "8000"
       MONGO_URI: "mongodb://${API_GATEWAY_MONGO_USER}:${API_GATEWAY_MONGO_PASSWORD}@mongo:27017/${API_GATEWAY_MONGO_DB}?authSource=${API_GATEWAY_MONGO_DB}"
       REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379"
@@ -107,6 +110,8 @@ services:
     build:
       context: ../m_sql_studio_sandbox
       dockerfile: Dockerfile
+      args:
+        - ENV_MODE=${ENV_MODE}
     environment:
       REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379"
       PG_HOST: "postgres"
