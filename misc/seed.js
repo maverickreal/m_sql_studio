@@ -24,7 +24,7 @@ if (fs.existsSync(envPath)) {
 }
 
 const API_GATEWAY_URL = process.env.API_GATEWAY_URL || "http://127.0.0.1:8000";
-const CLIENT_URL = process.env.CLIENT_URL || "http://127.0.0.1";
+const CLIENT_URL = process.env.CLIENT_URL || "http://127.0.0.1:3000";
 const ADMIN_EMAIL = process.env.DEFAULT_ADMIN_EMAIL || "admin@m-sql-studio.dev";
 const ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD || "admin123";
 
