@@ -14,21 +14,28 @@ services:
       timeout: 5s
       retries: 3
 
-  mongo:
+  mongo1:
     image: mongo:8
+    command: >
+      bash -c "
+      mongod --replSet rs0 --bind_ip_all --keyFile /data/mongo-keyfile &
+      sleep 5;
+      bash /scripts/setup.sh;
+      wait -n;
+      "
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
       API_GATEWAY_MONGO_ROLE: ${API_GATEWAY_MONGO_ROLE}
       API_GATEWAY_MONGO_DB: ${API_GATEWAY_MONGO_DB}
       API_GATEWAY_MONGO_USER: ${API_GATEWAY_MONGO_USER}
       API_GATEWAY_MONGO_PASSWORD: ${API_GATEWAY_MONGO_PASSWORD}
-
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
-      - ./misc/init-db/mongodb:/docker-entrypoint-initdb.d:ro
+      - mongo1-data:/data/db
+      - ./misc/init-db/mongodb/mongo-keyfile:/data/mongo-keyfile:ro
+      - ./misc/init-db/mongodb/setup.sh:/scripts/setup.sh:ro
     healthcheck:
       test:
         [
@@ -46,6 +53,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  mongo2:
+    image: mongo:8
+    command: ["--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/mongo-keyfile"]
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo2-data:/data/db
+      - ./misc/init-db/mongodb/mongo-keyfile:/data/mongo-keyfile:ro
+
+  mongo3:
+    image: mongo:8
+    command: ["--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/mongo-keyfile"]
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo3-data:/data/db
+      - ./misc/init-db/mongodb/mongo-keyfile:/data/mongo-keyfile:ro
 
   postgres:
     image: postgres:16-alpine
@@ -79,12 +104,17 @@ services:
       CLIENT_URL: "${CLIENT_URL}"
       ADMIN_SECRET_CODE: "${ADMIN_SECRET_CODE}"
       SERVER_PORT: "8000"
-      MONGO_URI: "mongodb://${API_GATEWAY_MONGO_USER}:${API_GATEWAY_MONGO_PASSWORD}@mongo:27017/${API_GATEWAY_MONGO_DB}?authSource=${API_GATEWAY_MONGO_DB}"
+      MONGO_URI: "mongodb://${API_GATEWAY_MONGO_USER}:${API_GATEWAY_MONGO_PASSWORD}@mongo1:27017,mongo2:27017,mongo3:27017/${API_GATEWAY_MONGO_DB}?replicaSet=rs0&authSource=${API_GATEWAY_MONGO_DB}"
       REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379"
       ENV_MODE: "${ENV_MODE}"
       LOG_LEVEL: "${LOG_LEVEL}"
       LOG_DIR: "/var/log/m_sql_studio"
       BULLMQ_SQL_QUEUE_NAME: "${BULLMQ_SQL_QUEUE_NAME}"
+      SANDBOX_PG_HOST: "postgres"
+      SANDBOX_PG_PORT: "5432"
+      SANDBOX_PG_DATABASE: "${POSTGRES_DB}"
+      SANDBOX_PG_USER: "${SANDBOX_PG_USER}"
+      SANDBOX_PG_PASSWORD: "${SANDBOX_PG_PASSWORD}"
       INTERNAL_API_KEY: "${INTERNAL_API_KEY}"
       BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET}"
       BETTER_AUTH_URL: "${BETTER_AUTH_URL}"
@@ -102,7 +132,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongo:
+      mongo1:
         condition: service_healthy
     restart: unless-stopped
 
@@ -139,8 +169,6 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
-    mem_limit: 512m
-    cpus: 1.0
 
   client:
     build:
@@ -162,6 +190,8 @@ services:
     restart: unless-stopped
 
 volumes:
-  mongo-data:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
   postgres-data:
   redis-data:

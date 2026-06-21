@@ -6,10 +6,22 @@
 
 set -e
 
+KEYFILE="misc/init-db/mongodb/mongo-keyfile"
+if [ ! -f "$KEYFILE" ]; then
+  echo "Generating MongoDB keyfile..."
+  mkdir -p misc/init-db/mongodb
+  openssl rand -base64 741 > "$KEYFILE"
+  chmod 400 "$KEYFILE"
+fi
+
 echo "Installing dependencies for api-gateway and sandbox."
 cd ../m_sql_studio_api_gateway && npm ci
 cd ../m_sql_studio_sandbox && npm ci
 cd ../m_sql_studio
+
+export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+
+pkill -f "docker.*compose.*watch" || true
 
 # Cleanup containers, volumes, and networks and rebuild images.
 docker stop $(docker ps -q) 2>/dev/null || true && \
@@ -28,9 +40,9 @@ if [ -f .env ]; then
     echo "Seeding initial data in DBs for dev env."
     API_GATEWAY_URL=$(grep "^API_GATEWAY_URL=" .env | cut -d'=' -f2);
     export API_GATEWAY_URL=$API_GATEWAY_URL;
-    node misc/seed.js;
+    ./misc/seed.js;
   fi
 fi
 
-echo "Running `docker compose watch`."
+echo "Running 'docker compose watch'."
 docker compose watch

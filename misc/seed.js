@@ -1,12 +1,31 @@
-/*
- * To run the E2E test:
- * E2E_TEST=true MONGO_HOST= REDIS_HOST= npm run test -- assignment_execution.e2e.test.ts
- * Check the test file for altering certain values.
- */
+#!/usr/bin/env node
+
+const fs = require("fs");
+const path = require("path");
+
+const envPath = path.resolve(__dirname, "../.env");
+if (fs.existsSync(envPath)) {
+  const envFile = fs.readFileSync(envPath, "utf8");
+  envFile.split("\n").forEach((line) => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const parts = trimmed.split("=");
+      const key = parts[0].trim();
+      const value = parts
+        .slice(1)
+        .join("=")
+        .trim()
+        .replace(/^['"]|['"]$/g, "");
+      if (key && !process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  });
+}
 
 const API_GATEWAY_URL = process.env.API_GATEWAY_URL || "http://127.0.0.1:8000";
-const ADMIN_EMAIL =
-  process.env.DEFAULT_ADMIN_EMAIL || "admin@m-sql-studio.dev";
+const CLIENT_URL = process.env.CLIENT_URL || "http://127.0.0.1";
+const ADMIN_EMAIL = process.env.DEFAULT_ADMIN_EMAIL || "admin@m-sql-studio.dev";
 const ADMIN_PASSWORD = process.env.DEFAULT_ADMIN_PASSWORD || "admin123";
 
 let sessionCookie = null;
@@ -115,14 +134,22 @@ const waitForGateway = async (url, retries, interval) => {
   for (let i = 0; i < retries; i++) {
     try {
       const response = await fetch(url);
+      const body = await response.json().catch(() => null);
+      const mongoOk = body?.checks?.mongodb === "ok";
 
-      if (response.status !== 404) {
-        console.log("API Gateway is up!");
-
+      // Seeding only needs the API and MongoDB; sandbox_db may still be warming up.
+      if (response.ok || mongoOk) {
+        console.log("API Gateway is up and ready for seeding!");
         return true;
+      } else {
+        console.log(
+          `API Gateway returned status ${response.status}\n${url}. Attempt number ${i + 1} of ${retries}.`,
+        );
       }
     } catch (err) {
-      console.log(`Attempt number ${i + 1} of ${retries}.`);
+      console.log(
+        `Error: ${err.message}\nAttempt number ${i + 1} of ${retries}.`,
+      );
     }
     await new Promise((resolve) => setTimeout(resolve, interval));
   }
@@ -133,24 +160,32 @@ const waitForGateway = async (url, retries, interval) => {
 const seed = async () => {
   console.log("Seeding Database with sample assignments.");
 
-  const isUp = await waitForGateway(
-    `${API_GATEWAY_URL}/api/v1/assignments`,
-    10,
-    2000,
-  );
+  const isUp = await waitForGateway(`${API_GATEWAY_URL}/health`, 10, 2000);
 
   if (!isUp) {
-    console.error("API Gateway is unreachable; Skipping seed!");
+    console.error("API Gateway is unreachable or unhealthy; Skipping seed!");
     process.exit(1);
   }
 
   console.log("Authenticating as admin user...");
   const signInRes = await fetch(`${API_GATEWAY_URL}/api/auth/sign-in/email`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Origin: CLIENT_URL,
+    },
     body: JSON.stringify({ email: ADMIN_EMAIL, password: ADMIN_PASSWORD }),
     redirect: "manual",
   });
+
+  if (!signInRes.ok) {
+    const errorText = await signInRes.text();
+    console.error(
+      `Admin authentication failed! Status ${signInRes.status}: ${errorText}`,
+    );
+    process.exit(1);
+  }
+
   const setCookieHeader = signInRes.headers.get("set-cookie");
   if (setCookieHeader) {
     sessionCookie = setCookieHeader;
@@ -167,6 +202,7 @@ const seed = async () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Origin: CLIENT_URL,
             ...(sessionCookie ? { Cookie: sessionCookie } : {}),
           },
           body: JSON.stringify(assignment),
@@ -179,10 +215,7 @@ const seed = async () => {
       } else {
         const error = await response.text();
 
-        throw new Error({
-          respStatus: response.status,
-          err: error,
-        });
+        throw new Error(`Status ${response.status}: ${error}`);
       }
     } catch (err) {
       console.error(`Failed in seeding Assignment ${assignment.title}!`, err);

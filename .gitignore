@@ -1,3 +1,4 @@
 misc/ignore
 .env
 **/.DS_Store
+**/*keyfile

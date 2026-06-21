@@ -1,0 +1,13 @@
+services:
+  mongo1:
+    mem_limit: 512m
+
+  mongo2:
+    mem_limit: 512m
+
+  mongo3:
+    mem_limit: 512m
+
+  sandbox-executor:
+    mem_limit: 512m
+    cpus: 1.0
