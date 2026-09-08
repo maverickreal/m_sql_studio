@@ -98,8 +98,8 @@ services:
       dockerfile: Dockerfile
       args:
         - ENV_MODE=${ENV_MODE}
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       CLIENT_URL: "${CLIENT_URL}"
       ADMIN_SECRET_CODE: "${ADMIN_SECRET_CODE}"
@@ -134,6 +134,22 @@ services:
         condition: service_healthy
       mongo1:
         condition: service_healthy
+    restart: unless-stopped
+
+  api-gateway-b:
+    extends:
+      service: api-gateway
+
+  nginx-edge:
+    image: nginx:1.27-alpine
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx-cache:/var/cache/nginx
+    depends_on:
+      - api-gateway
+      - api-gateway-b
     restart: unless-stopped
 
   sandbox-executor:
@@ -195,3 +211,4 @@ volumes:
   mongo3-data:
   postgres-data:
   redis-data:
+  nginx-cache:
