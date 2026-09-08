@@ -139,6 +139,7 @@ services:
   api-gateway-b:
     extends:
       service: api-gateway
+    ports: []
 
   nginx-edge:
     image: nginx:1.27-alpine
