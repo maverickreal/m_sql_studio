@@ -24,7 +24,22 @@ There is no `maverickreal/m_sql`. The orchestrator is this repo (`m_sql_studio`)
    docker compose up -d --build
    node misc/seed.js
    ```
-4. Client UI: http://127.0.0.1:3000 — API: http://127.0.0.1:8000 — health: `curl -s http://127.0.0.1:8000/health`
++4. Client UI: http://127.0.0.1:3000 — API (via nginx-edge, 2 gateway replicas): http://127.0.0.1:8000 — health: `curl -s http://127.0.0.1:8000/health`
+5. Grade a sample assignment (cookie from sign-in or sign-up). Leaderboard solution: `SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 3;`
+   ```sh
+   curl -sS -c /tmp/msql.cj -b /tmp/msql.cj \
+     -H 'Content-Type: application/json' -H 'Origin: http://127.0.0.1:3000' \
+     -d '{"email":"<you@example.com>","password":"<password>","name":"Dev"}' \
+     http://127.0.0.1:8000/api/auth/sign-up/email
+   curl -sS http://127.0.0.1:8000/api/v1/assignments
+   curl -sS -c /tmp/msql.cj -b /tmp/msql.cj \
+     -H 'Content-Type: application/json' -H 'Origin: http://127.0.0.1:3000' \
+     -d '{"assignmentId":"<id>","userSql":"SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 3;","mode":"read"}' \
+     http://127.0.0.1:8000/api/v1/assignments/client-sql-code-run/execute
+   curl -sS -c /tmp/msql.cj -b /tmp/msql.cj \
+     http://127.0.0.1:8000/api/v1/assignments/client-sql-code-run/status/<taskId>
+   ```
+   A matching query returns `"passed": true`; a wrong ORDER BY returns `"passed": false`. The client assignment page shows Passed / Failed after Run Query.
 
 ## Architecture
 
