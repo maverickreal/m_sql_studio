@@ -24,7 +24,7 @@ There is no `maverickreal/m_sql`. The orchestrator is this repo (`m_sql_studio`)
    docker compose up -d --build
    node misc/seed.js
    ```
-+4. Client UI: http://127.0.0.1:3000 — API (via nginx-edge, 2 gateway replicas): http://127.0.0.1:8000 — health: `curl -s http://127.0.0.1:8000/health`
+4. Client UI: http://127.0.0.1:3000 — API (via nginx-edge, 2 gateway replicas): http://127.0.0.1:8000 — health: `curl -s http://127.0.0.1:8000/health`
 5. Grade a sample assignment (cookie from sign-in or sign-up). Leaderboard solution: `SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 3;`
    ```sh
    curl -sS -c /tmp/msql.cj -b /tmp/msql.cj \
