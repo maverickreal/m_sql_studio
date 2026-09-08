@@ -20,17 +20,14 @@ cd ../m_sql_studio_sandbox && npm ci
 cd ../m_sql_studio
 
 export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-msql-studio}"
 
 pkill -f "docker.*compose.*watch" || true
 
-# Cleanup containers, volumes, and networks and rebuild images.
-docker stop $(docker ps -q) 2>/dev/null || true && \
-docker rm -f $(docker ps -aq) 2>/dev/null || true && \
-docker volume rm -f $(docker volume ls -q) 2>/dev/null || true && \
-docker network rm $(docker network ls --filter type=custom -q) 2>/dev/null || true && \
-echo "Removed containers, volumes, and networks and rebuilding images.";
-
-docker compose up -d --build;
+# Only this compose project — do not stop or prune the rest of the machine.
+echo "Recreating ${COMPOSE_PROJECT_NAME} (containers + project volumes)."
+docker compose down -v
+docker compose up -d --build
 
 # Seed initial data in DBs for dev env.
 if [ -f .env ]; then
@@ -39,8 +36,8 @@ if [ -f .env ]; then
   if [ "$ENV_MODE" = "DEV" ]; then
     echo "Seeding initial data in DBs for dev env."
     API_GATEWAY_URL=$(grep "^API_GATEWAY_URL=" .env | cut -d'=' -f2);
-    export API_GATEWAY_URL=$API_GATEWAY_URL;
-    ./misc/seed.js;
+    export API_GATEWAY_URL=$API_GATEWAY_URL
+    node misc/seed.js
   fi
 fi
 

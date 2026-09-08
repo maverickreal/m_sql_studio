@@ -4,17 +4,27 @@ An online SQL learning platform where users solve SQL assignments against real P
 
 ### **_I M P O R T A N T_** note for developers:
 
-To test/run the entire backend locally, all you need do is:
+There is no `maverickreal/m_sql`. The orchestrator is this repo (`m_sql_studio`). Checkout **`dev`** on all four.
 
-1. Clone all the project repos:
-   - https://github.com/maverickreal/m_sql
-   - https://github.com/maverickreal/m_sql_studio_sandbox
+1. Clone sibling repos:
+   - https://github.com/maverickreal/m_sql_studio
    - https://github.com/maverickreal/m_sql_studio_api_gateway
-2. Run the following shell code, from within the orchestrator repo (m_sql_studio):
+   - https://github.com/maverickreal/m_sql_studio_sandbox
+   - https://github.com/maverickreal/m_sql_studio_client
+2. `cp .env.example .env` in `m_sql_studio` and fill it in (never commit `.env`).
+3. From `m_sql_studio` (does **not** stop unrelated Docker on the machine):
    ```sh
-   chmod u+x ./init.dev.bash;
-   ./init.dev.bash;
+   chmod u+x ./init.dev.bash
+   ./init.dev.bash
    ```
+   Safer equivalent without the watch loop:
+   ```sh
+   export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+   export COMPOSE_PROJECT_NAME=msql-studio
+   docker compose up -d --build
+   node misc/seed.js
+   ```
+4. Client UI: http://127.0.0.1:3000 — API: http://127.0.0.1:8000 — health: `curl -s http://127.0.0.1:8000/health`
 
 ## Architecture
 
@@ -44,6 +54,7 @@ Client (Browser)
 | ----------------------------------------------------------------- | ---------------------------------------------------- |
 | [m_sql_studio_api_gateway](../m_sql_studio_api_gateway) | Express.js 5 REST API (TypeScript, Node.js 22)       |
 | [m_sql_studio_sandbox](../m_sql_studio_sandbox)         | BullMQ SQL execution worker (TypeScript, Node.js 22) |
+| [m_sql_studio_client](../m_sql_studio_client)           | Web UI (Vite) on port 3000                           |
 
 ## Prerequisites
 
@@ -54,13 +65,14 @@ Client (Browser)
 
 ### 1. Clone All Repositories
 
-All three repositories must be sibling directories:
+All four repositories must be sibling directories:
 
 ```
 project/
-├── m_sql_studio/               # This repo
+├── m_sql_studio/               # This repo (orchestrator)
 ├── m_sql_studio_api_gateway/
-└── m_sql_studio_sandbox/
+├── m_sql_studio_sandbox/
+└── m_sql_studio_client/
 ```
 
 ### 2. Configure Environment Variables
@@ -80,7 +92,7 @@ bash init.dev.bash
 This script will:
 
 1. Run `npm ci` in both the API Gateway and Sandbox repos
-2. Stop and remove all existing Docker containers, volumes, and networks
+2. Recreate **only** the `msql-studio` compose project (not other Docker on the machine)
 3. Build and start all services via `docker compose up -d --build`
 4. Seed sample assignments into the database when `ENV_MODE=DEV`
 5. Start `docker compose watch` for live rebuilds on source changes
@@ -148,7 +160,7 @@ NOTE: For unit and integration tests, just run `npm run test` in eiter the API g
 
 ## TODOs:
 * Add comments.
-* Add authentication and authorisation.
+* Auth is live (better-auth email/password + admin plugin). Remaining: polish, OAuth config, RBAC review.
 * Enable load balancing, Nginx,di container, db replication/sharding, distributed worker, etc.
 * Integrate AI (API or local) for certain features.
 * Meditate on how to eliminate/minimise redundancy of relations due to schemas.
