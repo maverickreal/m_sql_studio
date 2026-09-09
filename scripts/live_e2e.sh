@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Live e2e through nginx-edge. No cookies. Exit nonzero on first miss.
+# Live e2e through nginx-edge. Anonymous (no cookies). Exit nonzero on first miss.
+# Logged-in session proof: scripts/live_e2e_auth.sh
 set -euo pipefail
 BASE="${LIVE_E2E_BASE:-http://127.0.0.1:8000}"
 OID="650000000000000000000001"
