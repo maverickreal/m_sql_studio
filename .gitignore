@@ -2,3 +2,5 @@ misc/ignore
 .env
 **/.DS_Store
 **/*keyfile
+docs/specs/_agy_*.txt
+docs/specs/_live_proof_results.json
