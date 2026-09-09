@@ -175,9 +175,8 @@ NOTE: For unit and integration tests, just run `npm run test` in eiter the API g
 
 ## TODOs:
 * Add comments.
-* Auth is live (better-auth email/password + admin plugin). Remaining: polish, OAuth config, RBAC review.
-* Enable load balancing, Nginx,di container, db replication/sharding, distributed worker, etc.
+* Auth is live (better-auth email/password + admin plugin, Google + GitHub OAuth). Remaining: polish, RBAC review.
+* Shipped: nginx-edge load balancing (2 gateway replicas), periodic schema cleanup (BullMQ), last-SQL persistence + restore, SSE job-status stream with polling fallback.
 * Integrate AI (API or local) for certain features.
 * Meditate on how to eliminate/minimise redundancy of relations due to schemas.
-* Periodically scheduled cleanups.
-* User SQL execution state persistence.
+* Remaining scale work: db replication/sharding, distributed worker, etc.
