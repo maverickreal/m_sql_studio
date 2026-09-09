@@ -180,3 +180,7 @@ NOTE: For unit and integration tests, just run `npm run test` in eiter the API g
 * Integrate AI (API or local) for certain features.
 * Meditate on how to eliminate/minimise redundancy of relations due to schemas.
 * Remaining scale work: db replication/sharding, distributed worker, etc.
+
+## GitHub problem bank webhook (PB1)
+
+Content lives in the public `maverickreal/m_sql_studio_problems` repo and is materialized into Mongo (`problems`, `sync_state`) via `POST /api/webhooks/github` on the gateway: the route verifies `X-Hub-Signature-256` (HMAC-SHA256 of the raw body with `GITHUB_WEBHOOK_SECRET`, `dev-webhook-secret` in DEV) and ignores non-`push` events, then enqueues BullMQ job `client_sql_studio_problems_sync` with `X-GitHub-Delivery` Redis dedup (24h TTL). The route sits under `/api/` so nginx-edge proxies it with no extra location block; `POST /internal/problems-sync` (internal API key) enqueues the same job manually with optional `{forced:true}` full resync, and DEV fixtures can be read from `GITHUB_PROBLEMS_LOCAL_DIR`.
