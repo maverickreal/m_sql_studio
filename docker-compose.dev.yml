@@ -11,3 +11,15 @@ services:
   sandbox-executor:
     mem_limit: 512m
     cpus: 1.0
+
+  api-gateway:
+    environment:
+      GITHUB_PROBLEMS_LOCAL_DIR: /problems-repo
+    volumes:
+      - ../m_sql_studio_problems:/problems-repo:ro
+
+  api-gateway-b:
+    environment:
+      GITHUB_PROBLEMS_LOCAL_DIR: /problems-repo
+    volumes:
+      - ../m_sql_studio_problems:/problems-repo:ro
