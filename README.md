@@ -188,3 +188,7 @@ Content lives in the public `maverickreal/m_sql_studio_problems` repo and is mat
 ## User profiles (PF)
 
 Authenticated users get a profile page at `/profile` (SPA routes `/profile` for own edit, `/profile/:id` for public read-only). Gateway exposes `GET /api/v1/profile/me`, `PATCH /api/v1/profile/me`, `GET /api/v1/profile/:id`. Profile data lives in Mongo `user_profiles` collection linked to `better-auth` users via `userId`; profile auto-created on signup.
+
+## Leaderboard
+
+`GET /api/v1/leaderboard` ranks users by total assignment passes (real sandbox `passed: boolean`, not synthetic scores). The leaderboard page lives at `/leaderboard` (SPA, 15s poll, "Load more" pagination, 15s public HTTP cache). Passes are recorded idempotently on the gateway side during job-status polling, so duplicate client polls never inflate counts.
