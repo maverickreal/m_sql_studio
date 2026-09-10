@@ -184,3 +184,7 @@ NOTE: For unit and integration tests, just run `npm run test` in eiter the API g
 ## GitHub problem bank webhook (PB1)
 
 Content lives in the public `maverickreal/m_sql_studio_problems` repo and is materialized into Mongo (`problems`, `sync_state`) via `POST /api/webhooks/github` on the gateway: the route verifies `X-Hub-Signature-256` (HMAC-SHA256 of the raw body with `GITHUB_WEBHOOK_SECRET`, `dev-webhook-secret` in DEV) and ignores non-`push` events, then enqueues BullMQ job `client_sql_studio_problems_sync` with `X-GitHub-Delivery` Redis dedup (24h TTL). The route sits under `/api/` so nginx-edge proxies it with no extra location block; `POST /internal/problems-sync` (internal API key) enqueues the same job manually with optional `{forced:true}` full resync, and DEV fixtures can be read from `GITHUB_PROBLEMS_LOCAL_DIR`.
+
+## User profiles (PF)
+
+Authenticated users get a profile page at `/profile` (SPA routes `/profile` for own edit, `/profile/:id` for public read-only). Gateway exposes `GET /api/v1/profile/me`, `PATCH /api/v1/profile/me`, `GET /api/v1/profile/:id`. Profile data lives in Mongo `user_profiles` collection linked to `better-auth` users via `userId`; profile auto-created on signup.
