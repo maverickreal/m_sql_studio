@@ -1,12 +1,26 @@
 services:
+  redis:
+    ports:
+      - "6379:6379"
+
   mongo1:
     mem_limit: 512m
+    ports:
+      - "27017:27017"
 
   mongo2:
     mem_limit: 512m
+    ports:
+      - "27018:27017"
 
   mongo3:
     mem_limit: 512m
+    ports:
+      - "27019:27017"
+
+  postgres:
+    ports:
+      - "5432:5432"
 
   sandbox-executor:
     mem_limit: 512m
