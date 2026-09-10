@@ -38,7 +38,10 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT c.name, SUM(oi.price * oi.quantity) as total_spent FROM customers c JOIN orders o ON c.id = o.customer_id JOIN order_items oi ON o.id = oi.order_id GROUP BY c.name;",
+      "| name |",
+      "| --- |",
+      "| Alice |",
+      "| Bob |",
     ],
     sampleOutput: "name | total_spent\n---|---\nAlice | 150.00\nBob | 75.50",
     initSql: `
@@ -60,7 +63,11 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT s.name FROM students s JOIN enrollments e ON s.id = e.student_id JOIN courses c ON e.course_id = c.id WHERE c.title = 'Computer Science 101';",
+      "| name |",
+      "| --- |",
+      "| Alice |",
+      "| Bob |",
+      "| Charlie |",
     ],
     sampleOutput: "name\n---\nAlice\nCharlie",
     initSql: `
@@ -80,7 +87,13 @@ const ASSIGNMENTS = [
     description: "Remove all books published before 1950 from the books table.",
     difficulty: "hard",
     mode: "write",
-    sampleInput: ["DELETE FROM books WHERE publish_year < 1950;"],
+    sampleInput: [
+      "| title | author | publish_year |",
+      "| --- | --- | --- |",
+      "| The Great Gatsby | F. Scott Fitzgerald | 1925 |",
+      "| 1984 | George Orwell | 1949 |",
+      "| The Catcher in the Rye | J.D. Salinger | 1951 |",
+    ],
     sampleOutput: "Successfully deleted 2 rows.",
     initSql: `
       CREATE TABLE books (id SERIAL PRIMARY KEY, title TEXT, author TEXT, publish_year INT);
@@ -97,7 +110,11 @@ const ASSIGNMENTS = [
     difficulty: "hard",
     mode: "write",
     sampleInput: [
-      "UPDATE employees SET salary = salary * 1.1 WHERE department = 'Engineering';",
+      "| name | department | salary |",
+      "| --- | --- | --- |",
+      "| Alice | Engineering | 100000.00 |",
+      "| Bob | Marketing | 80000.00 |",
+      "| Charlie | Engineering | 90000.00 |",
     ],
     sampleOutput: "Salaries updated for Engineering department.",
     initSql: `
@@ -116,7 +133,12 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "read",
     sampleInput: [
-      "SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 3;",
+      "| username | score |",
+      "| --- | --- |",
+      "| Alice | 75 |",
+      "| Bob | 80 |",
+      "| Charlie | 95 |",
+      "| Dave | 60 |",
     ],
     sampleOutput:
       "username | score\n---|---\nCharlie | 95\nBob | 80\nAlice | 75",
@@ -135,7 +157,13 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "read",
     sampleInput: [
-      "SELECT name, breed FROM dogs WHERE adopted = false ORDER BY name;",
+      "| name | breed | adopted |",
+      "| --- | --- | --- |",
+      "| Bella | Labrador | false |",
+      "| Max | Beagle | true |",
+      "| Luna | Poodle | false |",
+      "| Rocky | Bulldog | true |",
+      "| Coco | Terrier | false |",
     ],
     sampleOutput: "name | breed\n---|---\nBella | Labrador\nCoco | Terrier\nLuna | Poodle",
     initSql: `
@@ -153,7 +181,12 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "read",
     sampleInput: [
-      "SELECT film_title, starts_at FROM screenings WHERE starts_at >= '18:00' ORDER BY starts_at;",
+      "| film_title | starts_at |",
+      "| --- | --- |",
+      "| Solaris Return | 14:30 |",
+      "| Paper Moons | 18:15 |",
+      "| Harbor Nights | 20:45 |",
+      "| Dust Trails | 21:30 |",
     ],
     sampleOutput:
       "film_title | starts_at\n---|---\nPaper Moons | 18:15\nHarbor Nights | 20:45\nDust Trails | 21:30",
@@ -172,7 +205,12 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "read",
     sampleInput: [
-      "SELECT item, stock_kg FROM produce WHERE stock_kg < 10 ORDER BY stock_kg;",
+      "| item | stock_kg |",
+      "| --- | --- |",
+      "| Apples | 42.50 |",
+      "| Basil | 6.00 |",
+      "| Carrots | 18.00 |",
+      "| Dill | 3.25 |",
     ],
     sampleOutput: "item | stock_kg\n---|---\nDill | 3.25\nBasil | 6.00",
     initSql: `
@@ -190,7 +228,13 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "read",
     sampleInput: [
-      "SELECT full_name, plan FROM members WHERE active = true ORDER BY full_name;",
+      "| full_name | plan | active |",
+      "| --- | --- | --- |",
+      "| Ana | monthly | true |",
+      "| Ben | annual | false |",
+      "| Jo | annual | true |",
+      "| Max | monthly | false |",
+      "| Rae | monthly | true |",
     ],
     sampleOutput:
       "full_name | plan\n---|---\nAna | monthly\nJo | annual\nRae | monthly",
@@ -209,7 +253,13 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "read",
     sampleInput: [
-      "SELECT stop_name, weekday_headway_min FROM stops WHERE zone = 'downtown' ORDER BY weekday_headway_min;",
+      "| stop_name | zone | weekday_headway_min |",
+      "| --- | --- | --- |",
+      "| Central Plaza | downtown | 5 |",
+      "| Old Market | downtown | 8 |",
+      "| North Depot | uptown | 15 |",
+      "| River Gate | downtown | 12 |",
+      "| Hill View | suburb | 30 |",
     ],
     sampleOutput:
       "stop_name | weekday_headway_min\n---|---\nCentral Plaza | 5\nOld Market | 8\nRiver Gate | 12",
@@ -228,7 +278,13 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "read",
     sampleInput: [
-      "SELECT title, artist FROM tracks ORDER BY plays DESC LIMIT 3;",
+      "| title | artist | plays |",
+      "| --- | --- | --- |",
+      "| Night Bus | The Comets | 910 |",
+      "| Glass House | Mira | 720 |",
+      "| Static Bloom | The Comets | 655 |",
+      "| Paper Sun | Koda | 410 |",
+      "| Low Orbit | Mira | 95 |",
     ],
     sampleOutput:
       "title | artist\n---|---\nNight Bus | The Comets\nGlass House | Mira\nStatic Bloom | The Comets",
@@ -247,7 +303,11 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT d.dish_name, SUM(d.price * t.qty) as revenue FROM dishes d JOIN ticket_lines t ON d.id = t.dish_id GROUP BY d.dish_name ORDER BY revenue DESC;",
+      "| dish_name | price |",
+      "| --- | --- |",
+      "| Margherita | 12.50 |",
+      "| Ramen | 14.00 |",
+      "| Garden Salad | 9.00 |",
     ],
     sampleOutput:
       "dish_name | revenue\n---|---\nMargherita | 62.50\nRamen | 42.00\nGarden Salad | 36.00",
@@ -268,7 +328,12 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT v.patient_name, d.doc_name, v.visit_date FROM visits v JOIN doctors d ON v.doctor_id = d.id WHERE v.visit_date >= '2024-06-10' ORDER BY v.visit_date;",
+      "| patient_name | visit_date |",
+      "| --- | --- |",
+      "| Kim | 2024-06-02 |",
+      "| Sam | 2024-06-10 |",
+      "| Ivy | 2024-06-12 |",
+      "| Leo | 2024-06-15 |",
     ],
     sampleOutput:
       "patient_name | doc_name | visit_date\n---|---|---\nSam | Dr. Osei | 2024-06-10\nIvy | Dr. Patel | 2024-06-12\nLeo | Dr. Osei | 2024-06-15",
@@ -289,7 +354,10 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT f.flight_no, SUM(b.seats) as booked FROM flights f JOIN bookings b ON f.id = b.flight_id GROUP BY f.flight_no ORDER BY f.flight_no;",
+      "| flight_no | origin | destination |",
+      "| --- | --- | --- |",
+      "| KQ 101 | Nairobi | Lagos |",
+      "| KQ 205 | Nairobi | Accra |",
     ],
     sampleOutput: "flight_no | booked\n---|---\nKQ 101 | 210\nKQ 205 | 96",
     initSql: `
@@ -309,7 +377,12 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT h.holder_name, a.balance FROM holders h JOIN accounts a ON h.id = a.holder_id WHERE a.acct_type = 'checking' AND a.balance < 500 ORDER BY a.balance;",
+      "| holder_name | acct_type | balance |",
+      "| --- | --- | --- |",
+      "| Tess | checking | 120.00 |",
+      "| Raj | checking | 340.50 |",
+      "| Moe | checking | 1500.00 |",
+      "| Ada | savings | 80.00 |",
     ],
     sampleOutput: "holder_name | balance\n---|---\nTess | 120.00\nRaj | 340.50",
     initSql: `
@@ -329,7 +402,11 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT aisle, SUM(unit_cost * on_hand) as stock_value FROM parts GROUP BY aisle ORDER BY aisle;",
+      "| part_name | aisle | unit_cost | on_hand |",
+      "| --- | --- | --- | --- |",
+      "| Bolts | A1 | 0.50 | 400 |",
+      "| Nuts | A1 | 0.25 | 600 |",
+      "| Sensor | B2 | 22.00 | 10 |",
     ],
     sampleOutput: "aisle | stock_value\n---|---\nA1 | 350.00\nB2 | 220.00",
     initSql: `
@@ -347,7 +424,13 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "read",
     sampleInput: [
-      "SELECT neighborhood, ROUND(AVG(monthly_rent), 2) as avg_rent FROM listings GROUP BY neighborhood HAVING COUNT(*) >= 2 ORDER BY avg_rent DESC;",
+      "| neighborhood | bedrooms | monthly_rent |",
+      "| --- | --- | --- |",
+      "| Old Town | 1 | 1200 |",
+      "| Old Town | 2 | 1350 |",
+      "| Riverside | 1 | 900 |",
+      "| Hillcrest | 2 | 2000 |",
+      "| Hillcrest | 3 | 2200 |",
     ],
     sampleOutput: "neighborhood | avg_rent\n---|---\nHillcrest | 2100.00\nOld Town | 1275.00",
     initSql: `
@@ -365,7 +448,14 @@ const ASSIGNMENTS = [
     difficulty: "hard",
     mode: "read",
     sampleInput: [
-      "SELECT listener_name FROM spins GROUP BY listener_name HAVING COUNT(DISTINCT track_id) >= 3;",
+      "| listener_name | track_id |",
+      "| --- | --- |",
+      "| Amy | 1 |",
+      "| Amy | 2 |",
+      "| Amy | 3 |",
+      "| Bo | 1 |",
+      "| Bo | 2 |",
+      "| Cy | 4 |",
     ],
     sampleOutput: "listener_name\n---\nAmy",
     initSql: `
@@ -385,7 +475,14 @@ const ASSIGNMENTS = [
     difficulty: "hard",
     mode: "read",
     sampleInput: [
-      "SELECT DISTINCT r2.to_city FROM routes r1 JOIN routes r2 ON r1.to_city = r2.from_city WHERE r1.from_city = 'Aster' AND r2.to_city <> 'Aster' ORDER BY r2.to_city;",
+      "| from_city | to_city |",
+      "| --- | --- |",
+      "| Aster | Bex |",
+      "| Aster | Cora |",
+      "| Bex | Dell |",
+      "| Cora | Dell |",
+      "| Cora | Elm |",
+      "| Dell | Fay |",
     ],
     sampleOutput: "to_city\n---\nDell\nElm",
     initSql: `
@@ -403,7 +500,14 @@ const ASSIGNMENTS = [
     difficulty: "hard",
     mode: "read",
     sampleInput: [
-      "SELECT sender_acct, SUM(amount) as total_sent FROM transfers GROUP BY sender_acct HAVING SUM(amount) > 10000 ORDER BY total_sent DESC;",
+      "| sender_acct | amount |",
+      "| --- | --- |",
+      "| AC-77 | 8000.00 |",
+      "| AC-77 | 6500.00 |",
+      "| AC-31 | 9000.00 |",
+      "| AC-31 | 2200.00 |",
+      "| AC-09 | 4000.00 |",
+      "| AC-09 | 1500.00 |",
     ],
     sampleOutput: "sender_acct | total_sent\n---|---\nAC-77 | 14500.00\nAC-31 | 11200.00",
     initSql: `
@@ -421,7 +525,12 @@ const ASSIGNMENTS = [
     difficulty: "medium",
     mode: "write",
     sampleInput: [
-      "DELETE FROM reservations WHERE reserved_for < '2024-03-01' AND claimed = false;",
+      "| film_title | reserved_for | claimed |",
+      "| --- | --- | --- |",
+      "| Paper Moons | 2024-02-20 | false |",
+      "| Harbor Nights | 2024-02-25 | false |",
+      "| Dust Trails | 2024-03-10 | false |",
+      "| Paper Moons | 2024-02-18 | true |",
     ],
     sampleOutput: "Successfully deleted 2 rows.",
     initSql: `
@@ -440,7 +549,11 @@ const ASSIGNMENTS = [
     difficulty: "easy",
     mode: "write",
     sampleInput: [
-      "UPDATE trial_members SET active = false WHERE trial_ends < '2024-05-01';",
+      "| full_name | trial_ends | active |",
+      "| --- | --- | --- |",
+      "| Kim | 2024-04-20 | true |",
+      "| Lou | 2024-04-28 | true |",
+      "| Pam | 2024-05-10 | true |",
     ],
     sampleOutput: "Trials deactivated for lapsed members.",
     initSql: `
@@ -459,7 +572,13 @@ const ASSIGNMENTS = [
       "Mark the pet named 'Miso' as adopted.",
     difficulty: "medium",
     mode: "write",
-    sampleInput: ["UPDATE shelter_pets SET adopted = true WHERE pet_name = 'Miso';"],
+    sampleInput: [
+      "| pet_name | species | adopted |",
+      "| --- | --- | --- |",
+      "| Miso | cat | false |",
+      "| Biscuit | dog | false |",
+      "| Pip | rabbit | true |",
+    ],
     sampleOutput: "Adoption recorded for Miso.",
     initSql: `
       CREATE TABLE shelter_pets (id SERIAL PRIMARY KEY, pet_name TEXT, species TEXT, adopted BOOLEAN);
@@ -476,7 +595,12 @@ const ASSIGNMENTS = [
       "Insert the newly arrived shipment of 150 units under SKU 'W-500' into stock.",
     difficulty: "easy",
     mode: "write",
-    sampleInput: ["INSERT INTO stock (sku, qty) VALUES ('W-500', 150);"],
+    sampleInput: [
+      "| sku | qty |",
+      "| --- | --- |",
+      "| W-100 | 40 |",
+      "| W-200 | 75 |",
+    ],
     sampleOutput: "Shipment booked: 1 row inserted.",
     initSql: `
       CREATE TABLE stock (id SERIAL PRIMARY KEY, sku TEXT, qty INT);
@@ -493,7 +617,11 @@ const ASSIGNMENTS = [
     difficulty: "hard",
     mode: "write",
     sampleInput: [
-      "UPDATE savings SET balance = balance * (1 + rate_pct / 100) WHERE balance >= 1000;",
+      "| holder_name | balance | rate_pct |",
+      "| --- | --- | --- |",
+      "| Ann | 5000.00 | 2.00 |",
+      "| Ben | 800.00 | 2.00 |",
+      "| Cara | 12000.00 | 1.50 |",
     ],
     sampleOutput:
       "holder_name | balance\n---|---\nAnn | 5100.00\nBen | 800.00\nCara | 12180.00",
