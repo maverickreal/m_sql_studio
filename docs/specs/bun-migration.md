@@ -210,8 +210,7 @@ docker compose build sandbox-executor && docker compose up -d sandbox-executor
 
 ### 5.3 Client
 ```bash
-git -C m_sql_studio_client checkout HEAD -- Dockerfile package.json
-docker compose build client && docker compose up -d client
+git -C m_sql_studio_client checkout HEAD~1 -- Dockerfile package.json && rm -f m_sql_studio_client/bun.lock && docker compose build client && docker compose up -d client
 ```
 
 ### 5.4 Problems Repo
