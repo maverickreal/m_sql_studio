@@ -18,32 +18,10 @@ m_sql_studio/                 # compose + nginx-edge
 ## First boot (OrbStack or a VPS)
 
 ```bash
-cd m_sql_studio
-cp .env.example .env          # then fill real secrets
-# BETTER_AUTH_URL and CLIENT_URL must be the public origin in production
-# (https://your.domain). Local: http://127.0.0.1:8000 and http://127.0.0.1:3000
-
-export COMPOSE_FILE=docker-compose.yml
-# local laptop only:
-export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+cp .env.example .env  # fill secrets if first boot
 export COMPOSE_PROJECT_NAME=msql-studio
-
-# The One True Compose Project Name is `msql-studio`.
-# Always use `-p msql-studio` with docker compose commands to avoid
-# accidental creation of a duplicate `m_sql_studio` project.
-docker compose -p msql-studio build api-gateway
-docker compose -p msql-studio up -d
+./scripts/setup-fresh.sh
 ```
-
-Wait until `api-gateway` and `api-gateway-b` are healthy, then:
-
-```bash
-curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8000/health
-curl -sS -D- http://127.0.0.1:8000/api/v1/assignments | head
-curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/
-```
-
-Both gateway replicas must share one image SHA (`docker inspect msql-studio-api-gateway-1 msql-studio-api-gateway-b-1 --format '{{.Image}}'`).
 
 ## Project Name & Teardown Policy
 
