@@ -28,8 +28,11 @@ export COMPOSE_FILE=docker-compose.yml
 export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
 export COMPOSE_PROJECT_NAME=msql-studio
 
-docker compose build api-gateway
-docker compose up -d
+# The One True Compose Project Name is `msql-studio`.
+# Always use `-p msql-studio` with docker compose commands to avoid
+# accidental creation of a duplicate `m_sql_studio` project.
+docker compose -p msql-studio build api-gateway
+docker compose -p msql-studio up -d
 ```
 
 Wait until `api-gateway` and `api-gateway-b` are healthy, then:
@@ -40,7 +43,44 @@ curl -sS -D- http://127.0.0.1:8000/api/v1/assignments | head
 curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/
 ```
 
-Both gateway replicas must share one image SHA (`docker inspect … --format '{{.Image}}'`).
+Both gateway replicas must share one image SHA (`docker inspect msql-studio-api-gateway-1 msql-studio-api-gateway-b-1 --format '{{.Image}}'`).
+
+## Project Name & Teardown Policy
+
+- **One True Project Name**: `msql-studio` (container names `msql-studio-*`, network `msql-studio_default`).
+- **Duplicate Stack Prevention**: Running compose inside `m_sql_studio/` without specifying `-p msql-studio` causes Docker Compose to default the project name to `m_sql_studio`, generating duplicate containers and volumes (`m_sql_studio_*`).
+- **Tear Down Duplicate Stacks**:
+  ```bash
+  docker compose -p m_sql_studio down
+  ```
+  Remove stale duplicate containers/networks. Keep volumes unless proven redundant AND empty.
+
+## Hints (AI Hint Stack)
+
+- `docker-compose.yml` (line 35) defaults `HINT_ENABLED=false` so live failed queries return no hints by default.
+- To enable live hints:
+  1. Set `HINT_ENABLED=true` in `.env` (documented in `.env.example`).
+  2. For local LFM2.5 model serving:
+     Start server on host:
+     ```bash
+     mlx-serve LFM2.5-8B-A1B-MLX-6bit --detach
+     ```
+     Configure `.env`:
+     ```env
+     HINT_ENABLED=true
+     HINT_API_URL=http://host.docker.internal:3208/v1
+     HINT_MODEL=LFM2.5-8B-A1B-MLX-6bit
+     HINT_ALLOW_REMOTE=false
+     ```
+  3. Restart **ONLY** the two api-gateway replicas without touching database or edge services:
+     ```bash
+     docker compose -p msql-studio up -d --no-deps api-gateway api-gateway-b
+     ```
+  4. Verify both replicas are running healthy with the identical Image SHA:
+     ```bash
+     docker inspect msql-studio-api-gateway-1 msql-studio-api-gateway-b-1 --format '{{.Name}}: {{.State.Health.Status}} {{.Image}}'
+     ```
+  5. Remote vendor APIs: `HINT_ALLOW_REMOTE=true` plus remote URL/key (`HINT_REMOTE_API_URL`, `HINT_REMOTE_API_KEY`). Extra PII off-box requires founder approval.
 
 ## TLS (production)
 
@@ -61,16 +101,13 @@ Set in `.env`:
 
 OAuth: Google/GitHub callback URLs must match `BETTER_AUTH_URL`.
 
-## Hints
-
-Default `HINT_ENABLED=false` in compose. To enable: set `HINT_ENABLED=true` and `HINT_API_URL` to a reachable OpenAI-compatible `/v1` (host Ollama = `http://host.docker.internal:11434/v1`). Remote vendor APIs: `HINT_ALLOW_REMOTE=true` plus remote URL/key — extra PII off-box is a founder say.
-
 ## Do not
 
 - Publish Mongo/Redis/Postgres to the internet (base compose does not map those ports)
-- Commit `.env`
+- Commit `.env` or any secret files
 - Point production `CLIENT_URL` at `127.0.0.1`
 - Run `docker compose` with a Hub pull of `m_sql_studio-api-gateway` (`pull_policy: never`; build locally or from your registry)
+- Launch compose without `-p msql-studio`
 
 ## MongoDB password charset rule
 
