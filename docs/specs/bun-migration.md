@@ -198,8 +198,7 @@ If regressions or issues occur post-migration, execute the corresponding rollbac
 
 ### 5.1 API Gateway
 ```bash
-git -C m_sql_studio_api_gateway checkout HEAD -- Dockerfile package.json
-docker compose build api-gateway && docker compose up -d api-gateway
+git -C m_sql_studio_api_gateway checkout HEAD~1 -- Dockerfile package.json && rm -f m_sql_studio_api_gateway/bun.lock && docker compose build api-gateway && docker compose up -d api-gateway api-gateway-b
 ```
 
 ### 5.2 Sandbox Executor
