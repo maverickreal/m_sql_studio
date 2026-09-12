@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# scripts/setup-fresh.sh — idempotent fresh boot and verification for msql-studio
+# scripts/setup.sh — idempotent fresh boot and verification for msql-studio
 # Usage:
 #   export COMPOSE_PROJECT_NAME=msql-studio
 #   export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
-#   ./scripts/setup-fresh.sh
+#   ./scripts/setup.sh
 #
 # Must refuse to run without -p msql-studio semantics (export COMPOSE_PROJECT_NAME).
 
@@ -63,6 +63,9 @@ if [[ ! -f "$KEYFILE" ]]; then
 else
   chmod 400 "$KEYFILE" 2>/dev/null || true
 fi
+
+echo "=== [0/6] Tearing down existing stack and volumes (-p msql-studio down -v) ==="
+docker compose -p msql-studio down -v --remove-orphans
 
 echo "=== [1/6] Building all images (gateway, client, sandbox) ==="
 docker compose -p msql-studio build api-gateway client sandbox-executor
@@ -186,13 +189,8 @@ get_unique_title_count() {
 CURRENT_UNIQUE=$(get_unique_title_count)
 echo "  Current live unique titles: $CURRENT_UNIQUE"
 
-# Seed initial 25 base assignments if catalog is empty or missing base seed
-if (( CURRENT_UNIQUE < 25 )); then
-  echo "  Catalog unique count ($CURRENT_UNIQUE) < 25 — running seed.js..."
-  node misc/seed.js
-  CURRENT_UNIQUE=$(get_unique_title_count)
-  echo "  Base assignments seeded. Current unique titles: $CURRENT_UNIQUE"
-fi
+echo "  Running bootstrap guard and admin initialization via bun misc/seed.ts..."
+bun misc/seed.ts
 
 echo "  Triggering forced problems-sync via POST /internal/problems-sync..."
 SYNC_RESP=$(curl -sS -w "\n%{http_code}" -X POST \

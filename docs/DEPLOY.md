@@ -22,7 +22,7 @@ git checkout dev
 cp .env.example .env  # fill secrets if first boot
 export COMPOSE_PROJECT_NAME=msql-studio
 export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
-./scripts/setup-fresh.sh
+./scripts/setup.sh
 ```
 
 ## Project Name & Teardown Policy
@@ -34,6 +34,10 @@ export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
   docker compose -p m_sql_studio down
   ```
   Remove stale duplicate containers/networks. Keep volumes unless proven redundant AND empty.
+
+## Canonical Problem Seed Source
+
+The problems repository (`m_sql_studio_problems/problems/*.yaml` + `datasets/`) is the single canonical source of assignments, synchronized into the database via `problems-sync`. `misc/seed.ts` performs only admin user bootstrap and readiness checks, without maintaining any hardcoded assignment list.
 
 ## Hints (AI Hint Stack)
 

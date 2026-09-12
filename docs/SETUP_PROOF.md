@@ -10,17 +10,17 @@
 
 ## 1. Test Procedure
 
-1. **Refusal Verification**: Executed `./scripts/setup-fresh.sh` without `COMPOSE_PROJECT_NAME=msql-studio` set and without `-p msql-studio` flags. Verified it refused to run and exited with code 1.
+1. **Refusal Verification**: Executed `./scripts/setup.sh` without `COMPOSE_PROJECT_NAME=msql-studio` set and without `-p msql-studio` flags. Verified it refused to run and exited with code 1.
 2. **Nuked Docker Teardown**: Executed `docker compose -p msql-studio down -v` to destroy all containers, networks, and persistent volumes belonging strictly to the `msql-studio` project.
-3. **Fresh Boot Execution**: Executed `export COMPOSE_PROJECT_NAME=msql-studio && ./scripts/setup-fresh.sh`. Captured full green output.
-4. **Idempotency Verification**: Executed `./scripts/setup-fresh.sh` a second time against the running stack to confirm zero-downtime, idempotent re-run capability.
+3. **Fresh Boot Execution**: Executed `export COMPOSE_PROJECT_NAME=msql-studio && ./scripts/setup.sh`. Captured full green output.
+4. **Idempotency Verification**: Executed `./scripts/setup.sh` a second time against the running stack to confirm zero-downtime, idempotent re-run capability.
 
 ---
 
 ## 2. Refusal Proof
 
 ```
-$ env -u COMPOSE_PROJECT_NAME ./scripts/setup-fresh.sh
+$ env -u COMPOSE_PROJECT_NAME ./scripts/setup.sh
 ERROR: Must run with -p msql-studio semantics (export COMPOSE_PROJECT_NAME=msql-studio or pass -p msql-studio).
 Refusing to run to prevent accidental default project creation.
 [Exit Code: 1]
@@ -34,7 +34,7 @@ Command:
 ```bash
 docker compose -p msql-studio down -v
 export COMPOSE_PROJECT_NAME=msql-studio
-./scripts/setup-fresh.sh
+./scripts/setup.sh
 ```
 
 ### Full Green Run Log
@@ -451,4 +451,4 @@ Fresh boot complete. Stack is healthy and catalog contains 203 unique problems (
 | Base Assignment Seeding (`misc/seed.js`) | 25 seeded | 25 seeded | ✅ PASS | Paced seeding with admin authentication |
 | `POST http://127.0.0.1:8000/internal/problems-sync` | 202 Accepted | 202 Accepted | ✅ PASS | Forced sync enqueued with `x-internal-api-key` |
 | Catalog Gate: Live Unique Titles | >= 200 | 203 | ✅ PASS | 178 gold YAML problems synced + 25 seed assignments |
-| Idempotent Re-Run (`./scripts/setup-fresh.sh`) | 0 errors | 0 errors | ✅ PASS | Catalog remains at 203, gate passes instantly |
+| Idempotent Re-Run (`./scripts/setup.sh`) | 0 errors | 0 errors | ✅ PASS | Catalog remains at 203, gate passes instantly |
