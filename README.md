@@ -5,11 +5,12 @@ An online SQL learning platform where users solve SQL assignments against real P
 ## Quick Start
 
 ```bash
-# 1. Clone all four repos as siblings
+# 1. Clone all five repos as siblings
 git clone https://github.com/maverickreal/m_sql_studio.git
 git clone https://github.com/maverickreal/m_sql_studio_api_gateway.git
 git clone https://github.com/maverickreal/m_sql_studio_sandbox.git
 git clone https://github.com/maverickreal/m_sql_studio_client.git
+git clone https://github.com/maverickreal/m_sql_studio_problems.git
 
 # 2. Configure environment
 cd m_sql_studio
@@ -53,15 +54,15 @@ API Gateway  ──BullMQ──▶  Sandbox Executor
 
 | Repository | Description |
 |------------|-------------|
-| [m_sql_studio_api_gateway](../m_sql_studio_api_gateway) | Express.js 5 REST API (TypeScript, Node.js 22) |
-| [m_sql_studio_sandbox](../m_sql_studio_sandbox) | BullMQ SQL execution worker (TypeScript, Node.js 22) |
+| [m_sql_studio_api_gateway](../m_sql_studio_api_gateway) | Express.js 5 REST API (TypeScript, Bun) |
+| [m_sql_studio_sandbox](../m_sql_studio_sandbox) | BullMQ SQL execution worker (TypeScript, Bun) |
 | [m_sql_studio_client](../m_sql_studio_client) | Web UI (Vite + React 19) on port 3000 |
 | [m_sql_studio_problems](../m_sql_studio_problems) | Canonical problem bank (YAML + datasets) |
 
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose
-- [Node.js 22+](https://nodejs.org/) (for dependency installation and seeding)
+- [Bun](https://bun.sh/) (for dependency installation and seeding)
 
 ## Environment Variables
 
@@ -119,12 +120,12 @@ The problems repository (`m_sql_studio_problems/problems/*.yaml` + `datasets/`) 
 ## Running Tests
 
 ```bash
-E2E_TEST=true MONGO_HOST=<host> REDIS_HOST=<host> npm run test -- assignment_execution.e2e.test.ts
+E2E_TEST=true MONGO_HOST=<host> REDIS_HOST=<host> bun run test -- assignment_execution.e2e.test.ts
 ```
 
 See the test file in the API Gateway repository for configurable values.
 
-**Note:** For unit and integration tests, run `npm run test` in either the API gateway or sandbox repo.
+**Note:** For unit and integration tests, run `bun run test` in either the API gateway or sandbox repo.
 
 ## Key Features
 
@@ -160,8 +161,8 @@ Authenticated users get a profile page at `/profile` (SPA routes `/profile` for 
 
 ## Development Notes
 
-- All four repos must be on the `dev` branch
-- The orchestrator (`m_sql_studio`) is the only repo with Docker Compose; the other three are built from their own Dockerfiles
+- All five repos must be on the `dev` branch
+- The orchestrator (`m_sql_studio`) is the only repo with Docker Compose; the other four are built from their own Dockerfiles
 - `scripts/setup.sh` handles build, boot, health checks, and catalog gate (≥200 unique problems)
 
 ## License
