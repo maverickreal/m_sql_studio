@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # To run the E2E test:
-# E2E_TEST=true MONGO_HOST= REDIS_HOST= npm run test -- assignment_execution.e2e.test.ts
+# E2E_TEST=true MONGO_HOST= REDIS_HOST= bun run test -- assignment_execution.e2e.test.ts
 # Check the test file for altering certain values.
 
 set -e
@@ -15,8 +15,8 @@ if [ ! -f "$KEYFILE" ]; then
 fi
 
 echo "Installing dependencies for api-gateway and sandbox."
-cd ../m_sql_studio_api_gateway && npm ci
-cd ../m_sql_studio_sandbox && npm ci
+cd ../m_sql_studio_api_gateway && bun install --frozen-lockfile
+cd ../m_sql_studio_sandbox && bun install --frozen-lockfile
 cd ../m_sql_studio
 
 export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
