@@ -4,3 +4,11 @@ misc/ignore
 **/*keyfile
 docs/specs/_agy_*.txt
 docs/specs/_live_proof_results.json
+fix-mongo-keyfile.py
+workspace/
+m_sql_studio/
+m_sql_studio_api_gateway/
+m_sql_studio_client/
+m_sql_studio_problems/
+m_sql_studio_sandbox/
+misc/init-db/mongodb/healthcheck.sh
