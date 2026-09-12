@@ -147,17 +147,17 @@ m_sql_studio/
     ├── seed.js                 # Seeds sample SQL assignments via the API
     └── init-db/
         ├── mongodb/
-        │   └── 01-setup.js     # Creates MongoDB role and user for API Gateway
+        │   └── setup.sh        # Configures MongoDB replica set and users
         └── postgresql/
-            └── 01-setup.sh     # Creates restricted sandbox PostgreSQL role
+            └── setup.sh        # Creates restricted sandbox PostgreSQL role
 ```
 
 ## Database Initialization
 
 On first startup, Docker entrypoint scripts automatically configure the databases:
 
-- **PostgreSQL** (`misc/init-db/postgresql/01-setup.sh`): Creates a restricted `SANDBOX_PG_USER` role with `LOGIN`, `CONNECT`, and `TEMPORARY` privileges only. All other privileges on the `public` schema and database are revoked.
-- **MongoDB** (`misc/init-db/mongodb/01-setup.js`): Creates a custom role with `find`, `insert`, `update`, `remove`, and `createCollection` actions, then creates the API Gateway user with that role.
+- **PostgreSQL** (`misc/init-db/postgresql/setup.sh`): Creates a restricted `SANDBOX_PG_USER` role with `LOGIN`, `CONNECT`, and `TEMPORARY` privileges only. All other privileges on the `public` schema and database are revoked.
+- **MongoDB** (`misc/init-db/mongodb/setup.sh`): Initiates the replica set, creates the root admin user, and creates the API Gateway user with configured roles.
 
 ## Sample Data
 

@@ -18,7 +18,7 @@
 | `m_sql_studio_sandbox` | **GO-WITH-CHANGES** | BullMQ + `pg` + `redis` worker runs directly on Bun. Zero native modules. Verified worker lifecycle under Bun. Requires Dockerfile migration to `oven/bun:1.2-alpine`, `package.json` script updates (`node dist/worker.js` -> `bun dist/worker.js`), and test mock isolation if moving from `vitest` to `bun test`. |
 | `m_sql_studio_problems` | **GO** | All CLI scripts (`validate-problems.mjs`, `validate-datasets.mjs`, `test-executor.mjs`, `generate-uuids.mjs`, `generate-sandbox-gold-diff.mjs`) and test suites (`node:test` + `node:assert/strict`) run natively under Bun with 100% pass rate (24/24 tests pass in 129ms). Zero container changes. |
 | `misc/seed.js` | **GO** | Standalone seeding script using `fs`, `path`, and standard `fetch`. Runs out-of-the-box via `bun misc/seed.js`. Shebang can optionally update from `node` to `bun`. |
-| `misc/init-db/mongodb/01-setup.js` | **N/A (KEEP)** | MongoDB shell script executed by the `mongo:7` container entrypoint (`mongosh`). Not a Node.js runtime script. |
+| `misc/init-db/mongodb/01-setup.js` | **REMOVED** | Orphan, mongo init lives inline in setup.sh. |
 
 ---
 
