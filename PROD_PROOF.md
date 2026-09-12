@@ -129,7 +129,7 @@ Running 3 tests using 1 worker
 
 ## 7. Post-Migration Commit References
 
-- Root (`msql-studio`): `7570fb7` (`dev`)
+- Root (`msql-studio`): `0587b40` (`dev`)
 - API Gateway (`m_sql_studio_api_gateway`): `6eac285` (`dev`) — `build(gateway): bump Docker images to Bun 1.4-alpine and refresh bun.lock`
 - Client React (`m_sql_studio_client`): `7c8422f` (`dev`) — `build(client): bump Docker build stage to Bun 1.4-alpine and refresh bun.lock`
 - Sandbox Executor (`m_sql_studio_sandbox`): `da438f3` (`dev`) — `build(sandbox): bump Docker images to Bun 1.4-alpine and refresh bun.lock`
