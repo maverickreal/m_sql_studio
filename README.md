@@ -14,16 +14,11 @@ There is no `maverickreal/m_sql`. The orchestrator is this repo (`m_sql_studio`)
 2. `cp .env.example .env` in `m_sql_studio` and fill it in (never commit `.env`).
 3. From `m_sql_studio` (does **not** stop unrelated Docker on the machine):
    ```sh
-   chmod u+x ./init.dev.bash
-   ./init.dev.bash
-   ```
-   Safer equivalent without the watch loop:
-   ```sh
-   export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
    export COMPOSE_PROJECT_NAME=msql-studio
-   docker compose up -d --build
-   node misc/seed.js
+   export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+   ./scripts/setup.sh
    ```
+   The `setup.sh` script handles build, boot, health checks, and catalog gate (>= 200 unique problems).
 4. Client UI: http://127.0.0.1:3000 — API (via nginx-edge, 2 gateway replicas): http://127.0.0.1:8000 — health: `curl -s http://127.0.0.1:8000/health`
 5. Grade a sample assignment (cookie from sign-in or sign-up). Leaderboard solution: `SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 3;`
    ```sh
@@ -101,16 +96,19 @@ Fill in every value in `.env`. See the [Environment Variables](#environment-vari
 ### 3. Automated Dev Setup
 
 ```bash
-bash init.dev.bash
+export COMPOSE_PROJECT_NAME=msql-studio
+export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+./scripts/setup.sh
 ```
 
 This script will:
 
-1. Run `npm ci` in both the API Gateway and Sandbox repos
-2. Recreate **only** the `msql-studio` compose project (not other Docker on the machine)
-3. Build and start all services via `docker compose up -d --build`
-4. Seed sample assignments into the database when `ENV_MODE=DEV`
-5. Start `docker compose watch` for live rebuilds on source changes
+1. Build and start all services via `docker compose up -d --build`
+2. Wait for all services to be healthy (5 min timeout)
+3. Verify health endpoints (`/health`, catalog, client)
+4. Run bootstrap guard and admin initialization via `bun misc/seed.ts`
+4. Trigger forced problems-sync (canonical assignments from `m_sql_studio_problems` repo)
+5. Poll live unique-title count to >= 200 (catalog gate)
 
 ## Environment Variables
 
@@ -141,10 +139,12 @@ This script will:
 ```
 m_sql_studio/
 ├── docker-compose.yml          # Orchestrates all 5 services
+├── docker-compose.dev.yml      # DEV overlay (DB ports, mem limits, problems bind-mount)
 ├── .env.example                # Environment variable template
-├── init.dev.bash               # Automated dev environment setup
+├── scripts/
+│   └── setup.sh                # Idempotent fresh boot + catalog gate (canonical)
 └── misc/
-    ├── seed.js                 # Seeds sample SQL assignments via the API
+    ├── seed.ts                 # Bootstrap guard + admin init (bun-native, no hardcoded assignments)
     └── init-db/
         ├── mongodb/
         │   └── setup.sh        # Configures MongoDB replica set and users
@@ -159,9 +159,9 @@ On first startup, Docker entrypoint scripts automatically configure the database
 - **PostgreSQL** (`misc/init-db/postgresql/setup.sh`): Creates a restricted `SANDBOX_PG_USER` role with `LOGIN`, `CONNECT`, and `TEMPORARY` privileges only. All other privileges on the `public` schema and database are revoked.
 - **MongoDB** (`misc/init-db/mongodb/setup.sh`): Initiates the replica set, creates the root admin user, and creates the API Gateway user with configured roles.
 
-## Sample Data
+## Canonical Problem Seed Source
 
-When `ENV_MODE=DEV`, the init script automatically runs `misc/seed.js` to populate the platform with sample assignments across easy, medium, and hard difficulties, covering both read and write SQL modes.
+The problems repository (`m_sql_studio_problems/problems/*.yaml` + `datasets/`) is the single canonical source of assignments, synchronized into the database via `problems-sync` (triggered by `scripts/setup.sh`). `misc/seed.ts` performs only admin user bootstrap and readiness checks, without maintaining any hardcoded assignment list.
 
 ## Running Tests
 
