@@ -71,3 +71,7 @@ Default `HINT_ENABLED=false` in compose. To enable: set `HINT_ENABLED=true` and 
 - Commit `.env`
 - Point production `CLIENT_URL` at `127.0.0.1`
 - Run `docker compose` with a Hub pull of `m_sql_studio-api-gateway` (`pull_policy: never`; build locally or from your registry)
+
+## MongoDB password charset rule
+
+`API_GATEWAY_MONGO_PASSWORD` may contain any printable ASCII. The gateway URL-encodes the password at MONGO_URI construction time (see `src/data/db/client/index.ts:encodeMongoPassword`). Do **not** escape/quote the value in `.env`; write the raw string. If you change the password, rebuild the gateway image so the new encoded URI is baked in.
