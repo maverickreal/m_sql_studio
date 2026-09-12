@@ -204,8 +204,7 @@ docker compose build api-gateway && docker compose up -d api-gateway
 
 ### 5.2 Sandbox Executor
 ```bash
-git -C m_sql_studio_sandbox checkout HEAD -- Dockerfile package.json
-docker compose build sandbox-executor && docker compose up -d sandbox-executor
+git -C m_sql_studio_sandbox checkout HEAD~1 -- Dockerfile package.json && rm -f m_sql_studio_sandbox/bun.lock && docker compose build sandbox-executor && docker compose up -d sandbox-executor
 ```
 
 ### 5.3 Client
