@@ -135,13 +135,13 @@ services:
     image: m_sql_studio-api-gateway:latest
     build:
       # Single build for both replicas — prevents replica skew.
-      context: ../m_sql_studio_api_gateway
+      context: ./m_sql_studio_api_gateway
       dockerfile: Dockerfile
       args:
         - ENV_MODE=${ENV_MODE}
     develop:
       watch:
-        - path: ../m_sql_studio_api_gateway/src
+        - path: ./m_sql_studio_api_gateway/src
           action: rebuild
           target: /app/dist
 
@@ -173,7 +173,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     build:
-      context: ../m_sql_studio_sandbox
+      context: ./m_sql_studio_sandbox
       dockerfile: Dockerfile
       args:
         - ENV_MODE=${ENV_MODE}
@@ -195,7 +195,7 @@ services:
       API_GATEWAY_URL: "http://api-gateway:8000"
     develop:
       watch:
-        - path: ../m_sql_studio_sandbox/src
+        - path: ./m_sql_studio_sandbox/src
           action: rebuild
           target: /app/dist
     depends_on:
@@ -208,7 +208,7 @@ services:
   client:
     pull_policy: never
     build:
-      context: ../m_sql_studio_client
+      context: ./m_sql_studio_client
       dockerfile: Dockerfile
       args:
         NGINX_SERVER_NAME: "${NGINX_SERVER_NAME}"
@@ -217,7 +217,7 @@ services:
       - "3000:80"
     develop:
       watch:
-        - path: ../m_sql_studio_client/src
+        - path: ./m_sql_studio_client/src
           action: rebuild
           target: /app/dist
     depends_on:
