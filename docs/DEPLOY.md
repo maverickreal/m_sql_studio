@@ -18,8 +18,10 @@ m_sql_studio/                 # compose + nginx-edge
 ## First boot (OrbStack or a VPS)
 
 ```bash
+git checkout dev
 cp .env.example .env  # fill secrets if first boot
 export COMPOSE_PROJECT_NAME=msql-studio
+export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
 ./scripts/setup-fresh.sh
 ```
 
